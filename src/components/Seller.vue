@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { getData } from "../api/seller";
+import { getData } from "../api/data";
 export default {
   data() {
     return {
@@ -36,7 +36,6 @@ export default {
       const initOption = {
         title: {
           text: "▍ 商家销售统计",
-         
           left: 20,
           top: 20,
         },
@@ -54,14 +53,14 @@ export default {
           type: "category",
         },
         tooltip: {
-          trigger: "axis",
+          trigger: 'axis',
           axisPointer: {
-            type: "line",
+            type: 'line',
             z: 0,
             lineStyle: {
-              color: "#2D3443",
-            },
-          },
+              color: '#2D3443'
+            }
+          }
         },
         series: [
           {
@@ -103,7 +102,7 @@ export default {
     },
     //获取服务器数据
     getData() {
-      getData().then((res) => {
+      getData("seller").then((res) => {
         this.allDate = res.data;
         //对数组进行排序
         this.allDate.sort((a, b) => {

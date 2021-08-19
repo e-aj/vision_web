@@ -1,9 +1,9 @@
 import request from "../api/index"
 
-export function getData() {
+export function getData(url) {
     return request({
         method: "get",
-        url: "/seller",
+        url: url,
     })
 
 }
