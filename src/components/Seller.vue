@@ -19,14 +19,14 @@ export default {
   mounted() {
     this.initChart();
     this.getData();
-    window.addEventListener('resize',this.screeAdapter)
+    window.addEventListener("resize", this.screeAdapter);
     //在屏幕加载完成后，主动进行屏幕的适配
-    this.screeAdapter()
+    this.screeAdapter();
   },
   destroyed() {
     clearInterval(this.timerId);
     //在组件销毁时 ，需要将监听取消
-    window.removeEventListener('resize',this.screeAdapter)
+    window.removeEventListener("resize", this.screeAdapter);
   },
   methods: {
     //初始化echartsInstance对象
@@ -53,14 +53,14 @@ export default {
           type: "category",
         },
         tooltip: {
-          trigger: 'axis',
+          trigger: "axis",
           axisPointer: {
-            type: 'line',
+            type: "line",
             z: 0,
             lineStyle: {
-              color: '#2D3443'
-            }
-          }
+              color: "#2D3443",
+            },
+          },
         },
         series: [
           {
@@ -91,7 +91,7 @@ export default {
           },
         ],
       };
-      this.chartInstance.setOption(initOption)
+      this.chartInstance.setOption(initOption);
       //对图表对象进行鼠标时间的监听
       this.chartInstance.on("mouseover", () => {
         clearInterval(this.timerId);
@@ -155,14 +155,12 @@ export default {
       }, 3000);
     },
     //当浏览器的大小发生变化的时候，会调用的方法，来完成屏幕的适配
-    screeAdapter(){
-      
+    screeAdapter() {
       // console.log(this.$refs.seller_ref.offsetWidth)
-      const titleFontSize = this.$refs.seller_ref.offsetWidth / 100 * 3.6
+      const titleFontSize = (this.$refs.seller_ref.offsetWidth / 100) * 3.6;
       //和分辨率大小的配置项
       const adapterOption = {
         title: {
-         
           textStyle: {
             fontSize: titleFontSize,
           },
@@ -177,20 +175,18 @@ export default {
         series: [
           {
             barWidth: titleFontSize,
-           
+
             itemStyle: {
-              barBorderRadius: [0, titleFontSize /2, titleFontSize/2, 0],
+              barBorderRadius: [0, titleFontSize / 2, titleFontSize / 2, 0],
             },
           },
         ],
-      }
-      this.chartInstance.setOption(adapterOption)
+      };
+      this.chartInstance.setOption(adapterOption);
       //手动调用图表对象的resize,才能产生效果
 
-      this.chartInstance.resize()
-        
-
-    }
+      this.chartInstance.resize();
+    },
   },
 };
 </script>

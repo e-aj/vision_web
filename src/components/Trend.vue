@@ -1,5 +1,22 @@
 <template>
   <div class="com-container">
+    <div class="title" :style="comStyle">
+      <span>{{ "▍ " + showTitle }}</span>
+      <span class="iconfont title-icon" @click="showChoice = !showChoice"
+        >∨</span
+      >
+      <div class="select-con" v-show="showChoice" :style="marginStyle">
+        <div
+          class="select-item"
+          v-for="item in selectTypes"
+          :key="item.key"
+          @click="handleSelect(item.key)"
+        >
+          {{ item.text }}
+        </div>
+      </div>
+    </div>
+
     <div class="com-chart" ref="trend_ref"></div>
   </div>
 </template>
@@ -11,6 +28,9 @@ export default {
     return {
       chartInsance: null,
       allData: null, //从服务器获取的数据
+      showChoice: false, //是否显示可选项
+      choiceType: "map", //显示的数据类型
+      titleFontSize: 0, //指明标题的字体大小
     };
   },
   mounted() {
@@ -21,6 +41,36 @@ export default {
   },
   destroyed() {
     window.removeEventListener("resize", this.screeAdapter);
+  },
+  computed: {
+    selectTypes() {
+      if (!this.allData) {
+        return [];
+      } else {
+        return this.allData.type.filter((item) => {
+          return item.key !== this.choiceType;
+        });
+      }
+    },
+    //标题
+    showTitle() {
+      if (!this.allData) {
+        return "";
+      } else {
+        return this.allData[this.choiceType].title;
+      }
+    },
+    //设置标题的样式
+    comStyle() {
+      return {
+        fontSize: this.titleFontSize + "px",
+      };
+    },
+    marginStyle() {
+      return {
+        marginLeft: this.titleFontSize + "px",
+      };
+    },
   },
 
   methods: {
@@ -42,7 +92,7 @@ export default {
         legend: {
           left: 20,
           top: "15%",
-          icon:'circle'
+          icon: "circle",
         },
         xAxis: {
           type: "category",
@@ -58,49 +108,49 @@ export default {
     getData() {
       getData("trend").then((res) => {
         this.allData = res.data;
-        this.updtaChart();
+        this.updataChart();
       });
     },
     // 处理数据
-    updtaChart() {
-        // 半透明的颜色值
+    updataChart() {
+      // 半透明的颜色值
       const colorArr1 = [
-        'rgba(11, 168, 44, 0.5)',
-        'rgba(44, 110, 255, 0.5)',
-        'rgba(22, 242, 217, 0.5)',
-        'rgba(254, 33, 30, 0.5)',
-        'rgba(250, 105, 0, 0.5)'
-      ]
+        "rgba(11, 168, 44, 0.5)",
+        "rgba(44, 110, 255, 0.5)",
+        "rgba(22, 242, 217, 0.5)",
+        "rgba(254, 33, 30, 0.5)",
+        "rgba(250, 105, 0, 0.5)",
+      ];
       // 全透明的颜色值
       const colorArr2 = [
-        'rgba(11, 168, 44, 0)',
-        'rgba(44, 110, 255, 0)',
-        'rgba(22, 242, 217, 0)',
-        'rgba(254, 33, 30, 0)',
-        'rgba(250, 105, 0, 0)'
-      ]
+        "rgba(11, 168, 44, 0)",
+        "rgba(44, 110, 255, 0)",
+        "rgba(22, 242, 217, 0)",
+        "rgba(254, 33, 30, 0)",
+        "rgba(250, 105, 0, 0)",
+      ];
       //类目轴的数据
       const timeArr = this.allData.common.month;
       //y轴的数据  series下的数据
-      const valueArr = this.allData.map.data;
-      const seriesArr = valueArr.map((item,index) => {
+      const valueArr = this.allData[this.choiceType].data;
+      const seriesArr = valueArr.map((item, index) => {
         return {
           name: item.name,
           type: "line",
           data: item.data,
-          stack: "map",
-          areaStyle:{
-              color:new this.$echarts.graphic.LinearGradient(0,0,0,1,[
-                  {
-                      offset:0,
-                      color:colorArr1[index]
-                  },
-                  {
-                      offset:1,
-                      color:colorArr2[index]
-                  }
-              ])
-          }
+          stack: this.choiceType,
+          areaStyle: {
+            color: new this.$echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              {
+                offset: 0,
+                color: colorArr1[index],
+              },
+              {
+                offset: 1,
+                color: colorArr2[index],
+              },
+            ]),
+          },
         };
       });
       //图例的数据
@@ -120,9 +170,24 @@ export default {
     },
     //屏幕自适应
     screeAdapter() {
-      const adapterOption = {};
+      this.titleFontSize = (this.$refs.trend_ref.offsetWidth / 100) * 3.6;
+      const adapterOption = {
+        legend: {
+          itemWidth: this.titleFontSize,
+          itemHeight: this.titleFontSize,
+          itemGap: this.titleFontSize,
+          textStyle: {
+            fontSize: this.titleFontSize / 2,
+          },
+        },
+      };
       this.chartInsance.setOption(adapterOption);
       this.chartInsance.resize();
+    },
+    handleSelect(currentType) {
+      this.choiceType = currentType;
+      this.updtaChart();
+      this.showChoice = false;
     },
   },
 };
@@ -133,6 +198,20 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  .title {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    z-index: 10;
+    color: #fff;
+    .title-icon {
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    .select-con {
+      background-color: #222733;
+    }
+  }
   .com-chart {
     width: 100%;
     height: 100%;
