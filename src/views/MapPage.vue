@@ -1,6 +1,5 @@
 <template>
   <div class="com-page">
-      111
       <singel-map></singel-map>
   </div>
 </template>

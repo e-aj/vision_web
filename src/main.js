@@ -9,6 +9,7 @@ import './assets/font/iconfont.css'
 import axios from 'axios'
 import ElementPlus from 'element-plus';
 import 'element-plus/lib/theme-chalk/index.css';
+import 'echarts/lib/component/tooltip'
 
 const app = createApp(App)
 //将全局的echarts对象挂载到VUE原型上
